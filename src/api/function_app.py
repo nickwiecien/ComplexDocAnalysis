@@ -157,12 +157,6 @@ def agent_document_analysis_orchestrator(context):
 
     context.set_custom_status('Converted PDF to Images')
 
-    if len(analyze_prompt)==0:
-        analyze_prompt = open('prompt_analyze.txt', 'r').read()
-    if len(review_prompt)==0:
-        review_prompt = open('prompt_review.txt', 'r').read()
-    if len(format_prompt)==0:
-        format_prompt = open('prompt_format.txt', 'r').read()
     if len(schema)==0:
         schema = json.loads(open('schema.json', 'r').read())
     if len(format_template)==0:
