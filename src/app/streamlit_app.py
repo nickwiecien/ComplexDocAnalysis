@@ -10,6 +10,8 @@ from azure.identity import DefaultAzureCredential
 import re
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 import pandas as pd
+from azure.ai.projects import AIProjectClient
+
 
 # Load environment variables
 load_dotenv(override=True)
@@ -24,6 +26,17 @@ st.session_state.processing = False
 
 max_date = None
 max_file = None
+
+project_client = project_client = AIProjectClient.from_connection_string(
+    credential=DefaultAzureCredential(),
+    conn_str=os.environ['AZURE_AI_FOUNDRY_CONNECTION_STRING'],
+)
+
+analyst_agent_id = os.environ['ANALYST_AGENT_ID']
+reviewer_agent_id = os.environ['REVIEWER_AGENT_ID']
+formatter_agent_id = os.environ['FORMATTER_AGENT_ID']
+
+
 
 if os.path.exists('./prompt_edits'):
     files = os.listdir('./prompt_edits')
@@ -58,14 +71,14 @@ tab1, tab2, tab3 = st.tabs(["Agent Instructions & Schema", "Agent Analysis - Sin
 
 if 'analyst_prompt' not in st.session_state:
 
-    if max_file is None:
+    analyst_agent_instructions = project_client.agents.get_agent(analyst_agent_id).instructions
+    reviewer_agent_instructions = project_client.agents.get_agent(reviewer_agent_id).instructions
+    formatter_agent_instructions = project_client.agents.get_agent(formatter_agent_id).instructions
+    st.session_state.analyst_prompt = analyst_agent_instructions
+    st.session_state.reviewer_prompt = reviewer_agent_instructions
+    st.session_state.formatter_prompt = formatter_agent_instructions
 
-        with open('prompt_analyze.txt', 'r') as file:
-            st.session_state.analyst_prompt = file.read()
-        with open('prompt_review.txt', 'r') as file:
-            st.session_state.reviewer_prompt = file.read()
-        with open('prompt_format.txt', 'r') as file:
-            st.session_state.formatter_prompt = file.read()
+    if max_file is None:
         with open('schema.json', 'r') as file:
             st.session_state.target_schema = file.read()
         with open('format.json', 'r') as file:
@@ -73,9 +86,6 @@ if 'analyst_prompt' not in st.session_state:
 
     else:
         data = json.load(open(os.path.join('./prompt_edits', max_file)))
-        st.session_state.analyst_prompt = data['Analyst Prompt']
-        st.session_state.reviewer_prompt = data['Reviewer Prompt']
-        st.session_state.formatter_prompt = data['Formatter Prompt']
         st.session_state.target_schema = data['Target Schema']
         st.session_state.data_types = data['Data Types']
 
@@ -91,9 +101,6 @@ st.session_state.agent_outputs = []
 def save_prompts():
     # Get the values of all text fields
     prompts_data = {
-        "Analyst Prompt": st.session_state.analyst_prompt,
-        "Reviewer Prompt": st.session_state.reviewer_prompt,
-        "Formatter Prompt": st.session_state.formatter_prompt,
         "Target Schema": st.session_state.target_schema,
         "Data Types": st.session_state.data_types,
     }
@@ -108,8 +115,12 @@ def save_prompts():
     with open(filename, 'w') as f:
         json.dump(prompts_data, f, indent=4)
 
+    project_client.agents.update_agent(agent_id=analyst_agent_id, instructions=st.session_state.analyst_prompt)
+    project_client.agents.update_agent(agent_id=reviewer_agent_id, instructions=st.session_state.reviewer_prompt)
+    project_client.agents.update_agent(agent_id=formatter_agent_id, instructions=st.session_state.formatter_prompt)
+
     # Show the filename in the success message
-    st.success(f"Prompts have been successfully saved to {filename}!")
+    st.success(f"Agents have been updated in Azure AI Foundry and data schemas have been successfully saved to {filename}!")
 
     st.json(prompts_data)  # Display the saved data (for debugging/demo purposes)
 
@@ -153,9 +164,6 @@ def analyze_document(filename, max_iterations):
     body = {
         'container': os.getenv('DOCUMENT_CONTAINER'),
         'filename': filename,
-        'analyze_prompt': st.session_state.analyst_prompt,
-        'review_prompt': st.session_state.reviewer_prompt,
-        'format_prompt': st.session_state.formatter_prompt,
         'target_schema': st.session_state.target_schema,
         'schema_types': st.session_state.data_types,
         'max_iterations': st.session_state.max_iterations,
