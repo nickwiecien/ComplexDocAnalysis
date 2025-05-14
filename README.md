@@ -54,9 +54,9 @@ Then, install the necessary dependencies listed in [src/api/requirements.txt](sr
 |---------------------------------------|----------------------------------------------------------------------------------------------------------------------|  
 | `FUNCTIONS_WORKER_RUNTIME`            | Specifies the runtime for Azure Functions. In this case, it is set to `python`.                                      |  
 | `AzureWebJobsStorage`                 | Connection string for the Azure Storage account used by Azure Functions.                                             |  
-| `STORAGE_CONN_STR`                    | Connection string for another Azure Storage account, potentially used for document analysis storage.                 |  
-| `DOC_INTEL_ENDPOINT`                  | Endpoint URL for the Azure Cognitive Services Document Intelligence API.                                             |  
-| `DOC_INTEL_KEY`                       | API key for accessing the Azure Cognitive Services Document Intelligence API.                                        |  
+| `STORAGE_CONN_STR`                    | Connection string for another Azure Storage account, used for document analysis storage.                 |  
+| `DOC_INTEL_ENDPOINT`                  | Endpoint URL for the Azure Document Intelligence API.                                             |  
+| `DOC_INTEL_KEY`                       | API key for accessing the Azure Document Intelligence API.                                        |  
 | `AZURE_AI_FOUNDRY_CONNECTION_STRING`  | Connection string for Azure AI Foundry, which includes region, subscription ID, resource group, and project name.    |  
 | `ANALYST_AGENT_ID`                    | Identifier for the Analyst Agent used in the application.                                                            |  
 | `REVIEWER_AGENT_ID`                   | Identifier for the Reviewer Agent used in the application.                                                           |  
