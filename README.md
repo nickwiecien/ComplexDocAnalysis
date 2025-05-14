@@ -44,7 +44,7 @@ Following agent creation, collect the agent IDs. These IDs will be used as envir
 
 ## Running Your Agents
 
-The Azure Durable Function code located at [src\api\function_app.py] supports long-running orchestrations and is used to coordinate the agents together to extract targeted information from provided documents, and save the result to a specified datastore.
+The Azure Durable Function code located at [src/api/function_app.py](src/api/function_app.py) supports long-running orchestrations and is used to coordinate the agents together to extract targeted information from provided documents, and save the result to a specified datastore.
 
 To run the Azure Function locally you should first configure your local environment using the instructions provided in [this document]().
 
