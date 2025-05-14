@@ -14,7 +14,7 @@ Briefly, this repository contains multiple components including:
 
 ---
 
-### Required Resources
+## Required Resources
 
 In order to run this code, you will need to deploy the following resources in your Azure environment:
 
@@ -26,15 +26,23 @@ In order to run this code, you will need to deploy the following resources in yo
 
 After provisioning the resources above, create a container within your storage account, note the container name, and upload documents which you wish to analyze.
 
-### Creating Your Agents
+---
 
-To create the AI agents used for this workflow (Analyst, Reviewer, Formatter) you can either 1.) execute the notebook located at [src/setup/agent-creation-notebook.ipynb](src/setup/agent-creation-notebook.ipynb) or 2.) manually create them in an Azure AI Foundry project. If you opt to create these agents manually, you can retrieve the agent instructions from the notebook.
+## Creating Your Agents
+
+To create the AI agents used for this workflow (Analyst, Reviewer, Formatter) you can either 
+
+1.) execute the notebook located at [src/setup/agent-creation-notebook.ipynb](src/setup/agent-creation-notebook.ipynb) or... 
+
+2.) manually create them in an Azure AI Foundry project. If you opt to create these agents manually, you can retrieve the agent instructions from the notebook.
 
 To run the notebook, first create a `.env` file using the template provided in [src/setup/.env.sample](src/setup/.env.sample) which includes the connection string for your Azure AI Foundry connection string.
 
 Following agent creation, collect the agent IDs. These IDs will be used as environment variables in both your Azure Durable Function (agent orchestration) and Streamlit (web UI) code. Note: if running the notebook, these values are automatically stored in your [src/setup/.env](src/setup/.env) file.
 
-### Running Your Agents
+---
+
+## Running Your Agents
 
 The Azure Durable Function code located at [src\api\function_app.py] supports long-running orchestrations and is used to coordinate the agents together to extract targeted information from provided documents, and save the result to a specified datastore.
 
@@ -67,7 +75,9 @@ func start
 
 This should launch your durable function on http://127.0.0.1:7071. You can submit HTTP requests to this local endpoint to execute your agent orchestration.
 
-### Testing Your Agents
+---
+
+## Testing Your Agents
 
 To simplify the process of executing your agents, we have provided a sample Streamlit application that can be used for prompt engineering/updating agent instructions, testing individual documents, and analyzing multiple documents in a batch. Before launching the app, install the dependencies listed in [src\app\requirements.txt]. Then, run the following command:
 
