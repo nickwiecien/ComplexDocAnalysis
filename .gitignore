@@ -174,3 +174,5 @@ cython_debug/
 .pypirc
 
 src/scratch/*
+
+src/app/prompt_edits/*
